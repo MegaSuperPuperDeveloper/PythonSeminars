@@ -23,11 +23,10 @@ print(func_1(7))
 def func_2(n, count = 1, count1 = 0):
     if n % count == 0:
         count1 += 1
-    count += 1
     if count > n:
         if count1 == 2:
             return "yes"
         return "no"
-    return func_2(n, count, count1)
+    return func_2(n, count+1, count1)
 
 print(func_2(7))
