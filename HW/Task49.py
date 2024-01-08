@@ -9,9 +9,35 @@
 
 from csv import DictReader, DictWriter
 from os.path import exists
+
+
 class LenNumberError:
-    def __init__(self, txt):
+    def init(self, txt):
         self.txt = txt
+
+
+def copy_row(file_name, file_name1):
+    try:
+        row = int(input("Введите номер строки для копирования: "))
+    except ValueError:
+        print("Введите номер строки!")
+        return
+    res = read_file(file_name)
+    try:
+        res = res[row - 1]
+    except IndexError:
+        print("Введенная строка не существует!")
+        return
+    res1 = ""
+    for el in res:
+        print(el)
+        res1 += res[el]
+        if el != 'телефон':
+            res1 += ','
+    print(res1)
+    with open(file_name1, 'a', encoding='utf-8') as data:
+        data.write(f"\n{res1}")
+
 
 def get_info():
     first_name = 'Ivan'
@@ -32,15 +58,18 @@ def get_info():
             continue
     return [first_name, last_name, phone_number]
 
+
 def create_file(file_name):
     with open(file_name, 'w', encoding='utf-8') as data:
         f_writer = DictWriter(data, fieldnames=['имя', 'фамилия', 'телефон'])
         f_writer.writeheader()
 
+
 def read_file(file_name):
     with open(file_name, 'r', encoding='utf-8') as data:
-        f_reader = DictReader(data)
+        f_reader = DictReader(data, fieldnames=['имя', 'фамилия', 'телефон'])
         return list(f_reader)
+
 
 def write_file(file_name):
     res = read_file(file_name)
@@ -56,7 +85,11 @@ def write_file(file_name):
         f_writer.writeheader()
         f_writer.writerows(res)
 
+
 file_name = 'phone.csv'
+file_name1 = 'phone1.csv'
+create_file(file_name1)
+
 
 def main():
     while True:
@@ -66,13 +99,17 @@ def main():
         elif command == 'w':
             if not exists(file_name):
                 create_file(file_name)
-                write_file(file_name)
+            write_file(file_name)
         elif command == 'r':
             if not exists(file_name):
                 print("Файл не создан. Создайте файл.")
                 continue
             print(*read_file(file_name))
-        elif command == "c": # Доделать
-            pass
+        elif command == "c":
+            if not exists(file_name):
+                print("Файл не создан. Создайте файл.")
+                continue
+            copy_row(file_name, file_name1)
+
 
 main()
